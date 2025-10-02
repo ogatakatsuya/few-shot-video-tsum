@@ -1,0 +1,11 @@
+[project]
+name = "few-shot-tsum"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "evaluate>=0.4.6",
+    "pycocoevalcap>=1.2",
+    "rouge-score>=0.1.2",
+]
