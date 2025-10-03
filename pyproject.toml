@@ -8,4 +8,5 @@ dependencies = [
     "evaluate>=0.4.6",
     "pycocoevalcap>=1.2",
     "rouge-score>=0.1.2",
+    "yt-dlp>=2025.9.26",
 ]

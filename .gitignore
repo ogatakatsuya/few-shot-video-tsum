@@ -10,3 +10,6 @@ wheels/
 .venv
 
 .claude
+
+data/videos
+data/val_videoxum.json
