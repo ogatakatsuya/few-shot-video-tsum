@@ -13,3 +13,7 @@ wheels/
 
 data/videos
 data/val_videoxum.json
+results/zero-shot
+results/random-few-shot
+results/few-shot
+.env
