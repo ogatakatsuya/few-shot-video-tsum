@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from src.embeddings.dinov3 import DINOv3VideoEncoder
+from src.video_encoder.dinov3 import DINOv3VideoEncoder
 from src.rag.db.conn import get_connection
 from src.rag.operations import insert_video_embedding
 
