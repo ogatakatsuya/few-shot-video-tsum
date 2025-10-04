@@ -77,11 +77,13 @@ def generate_summary_with_random_examples(
     example_texts = []
     for idx, example in enumerate(examples, 1):
         example_summary = " ".join(example["tsum"])
-        example_texts.append(f"EXAMPLE {idx}:\nSummary: {example_summary}\n")
+        example_texts.append(f"EXAMPLE {idx}:\n{example_summary}\n")
 
     # Final prompt text
     examples_section = "\n".join(example_texts)
     prompt_text = Template(PROMPT).render(examples=examples_section)
+
+    print(f"Prompt:\n{prompt_text}")
 
     # Generate summary
     print("  Generating summary...")

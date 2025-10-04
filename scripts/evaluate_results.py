@@ -142,6 +142,30 @@ def main():
         print(f"  ROUGE-L: {scores['ROUGE-L']:.4f}")
         print(f"  CIDEr:   {scores['CIDEr']:.4f}")
 
+    # Compute and print average across all CSVs
+    if all_results:
+        print("\n" + "=" * 80)
+        print("AVERAGE ACROSS ALL CSVs")
+        print("=" * 80)
+
+        avg_bleu = sum(scores["BLEU-4"] for scores in all_results.values()) / len(
+            all_results
+        )
+        avg_meteor = sum(scores["METEOR"] for scores in all_results.values()) / len(
+            all_results
+        )
+        avg_rouge_l = sum(scores["ROUGE-L"] for scores in all_results.values()) / len(
+            all_results
+        )
+        avg_cider = sum(scores["CIDEr"] for scores in all_results.values()) / len(
+            all_results
+        )
+
+        print(f"  BLEU-4:  {avg_bleu:.4f}")
+        print(f"  METEOR:  {avg_meteor:.4f}")
+        print(f"  ROUGE-L: {avg_rouge_l:.4f}")
+        print(f"  CIDEr:   {avg_cider:.4f}")
+
 
 if __name__ == "__main__":
     main()
