@@ -18,4 +18,5 @@ data/embeddings_dinov3.pkl
 results/zero-shot
 results/random-few-shot
 results/few-shot
+results/distant-few-shot
 .env

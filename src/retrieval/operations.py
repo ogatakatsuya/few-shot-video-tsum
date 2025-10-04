@@ -58,3 +58,32 @@ def search_similar_videos(
             (embedding_str, limit),
         )
         return cur.fetchall()
+
+
+def search_dissimilar_videos(
+    conn: connection, query_embedding: np.ndarray, limit: int = 5
+) -> list[tuple[str, str, float]]:
+    """
+    Search for dissimilar videos using cosine similarity.
+
+    Args:
+        conn: PostgreSQL connection
+        query_embedding: Query embedding vector (768,)
+        limit: Number of results to return
+
+    Returns:
+        List of tuples: (video_id, summary_ground_truth, distance)
+    """
+    with conn.cursor() as cur:
+        # Convert numpy array to string format for vector casting
+        embedding_str = "[" + ",".join(map(str, query_embedding.tolist())) + "]"
+        cur.execute(
+            """
+            SELECT video_id, summary_ground_truth, embedding <=> %s::vector AS distance
+            FROM video_embeddings
+            ORDER BY distance DESC
+            LIMIT %s
+            """,
+            (embedding_str, limit),
+        )
+        return cur.fetchall()
