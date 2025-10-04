@@ -1,7 +1,11 @@
 from google.genai import Client, types
 
 from .base import BaseTsumGenerator, Prompt
-from src.schema.gemini import GeminiTextPrompt, GeminiYoutubePrompt, GeminiPrompt
+from src.tsummarizer.schema.gemini import (
+    GeminiTextPrompt,
+    GeminiYoutubePrompt,
+    GeminiPrompt,
+)
 
 
 class GeminiTsumGenerator(BaseTsumGenerator):

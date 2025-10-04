@@ -44,7 +44,7 @@ def download_video(video_id: str, output_dir: Path) -> bool:
     }
 
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:  # type: ignore
             error_code = ydl.download([url])
             if error_code != 0:
                 return False
@@ -57,8 +57,8 @@ def download_video(video_id: str, output_dir: Path) -> bool:
 def main():
     """Main function to download all videos from the dataset."""
     # Load dataset
-    data_file = Path("data/val_videoxum.json")
-    output_dir = Path("data/videos")
+    data_file = Path("data/test_videoxum.json")
+    output_dir = Path("data/videos/test")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Loading dataset from {data_file}...")
