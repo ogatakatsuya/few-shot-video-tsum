@@ -16,19 +16,65 @@ Don't use audio information.
 """
 
 
+def generate_zero_shot_summary(
+    summarizer: GeminiTsumGenerator,
+    video_path: Path,
+) -> str:
+    """
+    Generate summary using LLM without examples.
+
+    Args:
+        summarizer: Summary generator
+        video_path: Path to video
+
+    Returns:
+        Generated summary text
+    """
+    print("  Generating summary...")
+    tsum = summarizer.generate(
+        [
+            Prompt(
+                video_path=video_path,
+                text=PROMPT,
+            )
+        ]
+    )
+    print(f"  Generated: {tsum[:100]}...")
+    return tsum
+
+
+def save_results_to_csv(results: list[dict[str, str]], output_csv: Path) -> None:
+    """
+    Save results to CSV file.
+
+    Args:
+        results: List of result dictionaries
+        output_csv: Path to output CSV file
+    """
+    print(f"\nSaving results to {output_csv}...")
+    with open(output_csv, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["video_id", "tsum", "ground_truth"])
+        writer.writeheader()
+        writer.writerows(results)
+    print(f"Done! Results saved to {output_csv}")
+
+
 def main():
-    # パスの設定
+    # Setup paths
     json_path = Path("data/val_videoxum.json")
-    video_dir = Path("data/videos")
+    video_dir = Path("data/videos/validation")
     now = datetime.now().strftime("%Y%m%d_%H%M")
     output_csv = Path(f"results/zero-shot/summaries_output_{now}.csv")
 
-    # JSONデータを読み込む
+    # Create output directory
+    output_csv.parent.mkdir(parents=True, exist_ok=True)
+
+    # Load JSON data
     print("Loading JSON data...")
     with open(json_path, "r") as f:
         data = json.load(f)
 
-    # 実際に存在する動画のみをフィルタリング
+    # Filter videos that actually exist
     print("Checking which videos exist...")
     existing_videos = []
     for item in data:
@@ -39,7 +85,7 @@ def main():
 
     print(f"Found {len(existing_videos)} videos out of {len(data)} in JSON")
 
-    # ランダムに10個選択
+    # Randomly select NUM_VIDEOS videos
     if len(existing_videos) < NUM_VIDEOS:
         print(f"Warning: Only {len(existing_videos)} videos available")
         selected_videos = existing_videos
@@ -50,47 +96,33 @@ def main():
 
     summarizer = GeminiTsumGenerator(api_key=env.GEMINI_API_KEY)
 
-    # 結果を保存するリスト
+    # Store results
     results = []
 
-    # 各動画について要約を生成
+    # Generate summary for each video
     for i, video_data in enumerate(selected_videos, 1):
         video_id = video_data["video_id"]
         video_path = video_dir / f"{video_id}.mp4"
 
         print(f"\n[{i}/{len(selected_videos)}] Processing {video_id}...")
 
-        # Ground truthを取得（tsumリストを結合）
+        # Get ground truth (join tsum list)
         ground_truth = " ".join(video_data["tsum"])
 
-        # 要約を生成
+        # Generate summary
         try:
-            tsum = summarizer.generate(
-                [
-                    Prompt(
-                        video_path=video_path,
-                        text=PROMPT,
-                    )
-                ]
-            )
-            print(f"Generated summary: {tsum[:100]}...")
+            tsum = generate_zero_shot_summary(summarizer, video_path)
         except Exception as e:
-            print(f"Error generating summary: {e}")
+            print(f"  Error: {e}")
             tsum = f"ERROR: {e}"
 
-        # 結果を追加
+        # Append result
         results.append(
             {"video_id": video_id, "tsum": tsum, "ground_truth": ground_truth}
         )
 
-    # CSVファイルに保存
-    print(f"\nSaving results to {output_csv}...")
-    with open(output_csv, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=["video_id", "tsum", "ground_truth"])
-        writer.writeheader()
-        writer.writerows(results)
-
-    print(f"Done! Results saved to {output_csv}")
+    # Save to CSV
+    save_results_to_csv(results, output_csv)
 
 
 if __name__ == "__main__":

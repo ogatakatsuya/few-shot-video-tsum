@@ -13,6 +13,8 @@ wheels/
 
 data/videos
 data/val_videoxum.json
+data/test_videoxum.json
+data/embeddings_dinov3.pkl
 results/zero-shot
 results/random-few-shot
 results/few-shot
