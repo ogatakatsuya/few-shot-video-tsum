@@ -46,13 +46,15 @@ def search_similar_videos(
         List of tuples: (video_id, summary_ground_truth, distance)
     """
     with conn.cursor() as cur:
+        # Convert numpy array to string format for vector casting
+        embedding_str = "[" + ",".join(map(str, query_embedding.tolist())) + "]"
         cur.execute(
             """
-            SELECT video_id, summary_ground_truth, embedding <=> %s AS distance
+            SELECT video_id, summary_ground_truth, embedding <=> %s::vector AS distance
             FROM video_embeddings
             ORDER BY distance
             LIMIT %s
             """,
-            (query_embedding.tolist(), limit),
+            (embedding_str, limit),
         )
         return cur.fetchall()
